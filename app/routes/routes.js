@@ -2,10 +2,12 @@ const router = require('express').Router()
 
 const AuthRoutes = require("app/routes/auth.routes")
 const ApiRoutes = require("app/routes/api.routes")
+const FakeRoutes = require("app/routes/fake/fake.routes")
 const RoutesManagement = require("app/http/middlewares/RoutesManagement")
-
-router.use('/api', ApiRoutes)
-router.use('/auth', RoutesManagement.ForbiddenToAccessAuthRoute, AuthRoutes)
+const Limiter = require("app/helpers/requestLimiter")
+router.use('/api',Limiter, ApiRoutes)
+router.use('/',Limiter, FakeRoutes)
+router.use('/auth', Limiter, RoutesManagement.ForbiddenToAccessAuthRoute, AuthRoutes)
 module.exports = router
 
 

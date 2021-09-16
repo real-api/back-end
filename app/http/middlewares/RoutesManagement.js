@@ -12,7 +12,7 @@ class RoutesManagement {
     }
     ForbiddenToAccessPanelRoute(req, res, next) {
         if (!req.isAuthenticated()) {
-            return res.json({
+            return res.status(401).json({
                 status: 401,
                 success: false,
                 error : "Unauthorized",

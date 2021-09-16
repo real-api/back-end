@@ -5,25 +5,15 @@ const autoBind = require("auto-bind");
 class rememberLogin extends Middleware {
     login(req, res, next) {
         if (!req.isAuthenticated()) {
-            const token = req.signedCookies['user-token'] || this.extractToken(req);
+            const token = this.extractToken(req);
             if (token) return this.autoLogin(token, req, next);
         }
         next();
     }
-    autoLogin(token, req, next) {
-        UserModel.findOne({
-            token
-        }, (error, user) => {
-            if (error) next(error)
-            if (user) {
-                req.login(user, err => {
-                    if (err) next(err)
-                    next()
-                })
-            } else {
-                next();
-            }
-        })
+    async autoLogin(token, req, next) {
+        const user = await UserModel.findOne({ token })
+        if (user) return req.login(user, err =>  next(err))
+        next()
     }
 
 }

@@ -90,7 +90,7 @@ module.exports = class Controller {
             }
         } else {
             return {
-                status: 599,
+                status: 504,
                 success: false,
                 error: 'SomeThingWrong',
                 ...object
@@ -117,7 +117,7 @@ module.exports = class Controller {
     removeImage(imageField) {
         if (imageField) {
             let indexOf = imageField.indexOf(`${process.env.BaseURL}`)
-        let length = `${process.env.BaseURL}`.length;
+            let length = `${process.env.BaseURL}`.length;
             let path = "./public" + imageField.substr(length);
             if (fs.existsSync(path)) {
                 fs.unlinkSync(path, (err) => {
@@ -141,5 +141,26 @@ module.exports = class Controller {
         }
         return undefined
 
+    }
+    generateRandomNumber(length) {
+        if (length === 4) {
+            return Math.floor(1000 + Math.random() * 9000)
+        }
+        if (length === 5) {
+            return Math.floor(10000 + Math.random() * 90000)
+        }
+        if (length === 6) {
+            return Math.floor(100000 + Math.random() * 900000)
+        }
+        if (length === 7) {
+            return Math.floor(1000000 + Math.random() * 9000000)
+        }
+    }
+
+    random_password_generate(max, min) {
+        const passwordChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz#@!%&()/";
+        const randPwLen = Math.floor(Math.random() * (max - min + 1)) + min;
+        const randPassword = Array(randPwLen).fill(passwordChars).map(x => x[Math.floor(Math.random() * x.length)]).join('');
+        return randPassword;
     }
 }

@@ -5,7 +5,7 @@ const BlogSchema = new Schema({
     text: { type: String, required: true },
     user: { type: mongoose.Types.ObjectId,ref : 'user', required: true },
     image: { type: String, default: undefined },
-    tags : {type : [String]}
+    tags : {type : [String]},
 }, {
     timestamps : true,
     toJSON : {virtuals : true}
@@ -16,16 +16,16 @@ BlogSchema.virtual('user-info', {
     foreignField : 'user'
 })
 BlogSchema.pre('save', function(next) {
-    this.populate([{path : 'user'}]);
+    this.populate([{path : 'user',  select : {email : 1, name : 1}}]);
     next()
 })
 BlogSchema.pre('find', function(next){
-    this.populate([{path : 'user'}]);
+    this.populate([{path : 'user', select : {email : 1, name : 1}}]);
     next()
     
 })
 BlogSchema.pre('findOne', function(next){
-    this.populate([{path : 'user'}]);
+    this.populate([{path : 'user', select : {email : 1, name : 1}}]);
     next()
     
 })

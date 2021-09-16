@@ -9,6 +9,7 @@ const AppRoutes = require("app/routes/routes");
 const passport = require('passport');
 const session = require("express-session");
 const rememberLogin = require("app/http/middlewares/user.token.middleware");
+
 module.exports = class Application {
     constructor() {
         this.configApplication();
@@ -51,14 +52,15 @@ module.exports = class Application {
         app.use(AppRoutes)
     }
     errorHandler() {
-        app.use('*', (req, res, next) => {
-            res.status(404).json({
+        app.use("*", (req, res, next) => {
+            return res.status(404).json({
                 status: 404,
-                message: "Not Found Route"
+                error: "Not Found Route"
             })
         })
         app.use((err, req, res, next) => {
-            res.status(err.status || 503).json(err)
+            if (!err.status) err = { status: 504, success: false, error: 'SomeThingWrong' }
+            return res.status(err.status).json(err)
         })
 
     }

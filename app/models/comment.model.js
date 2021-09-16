@@ -8,7 +8,9 @@ const CommentSchema = new Schema({
     flag: { type: Boolean, default: false }
 }, {
     timestamps: true,
-    toJSON: { virtuals: true }
+    toJSON: {
+        virtuals: true,
+    }
 })
 
 CommentSchema.virtual("children", {
@@ -22,6 +24,18 @@ const autoPopulateComment = function (next) {
 }
 
 CommentSchema.pre('findOne', autoPopulateComment).pre('find', autoPopulateComment);
+CommentSchema.pre('save', function (next) {
+    this.populate([{ path: 'user', select: { email: 1, name: 1 } }]);
+    next()
+})
+CommentSchema.pre('find', function (next) {
+    this.populate([{ path: 'user', select: { email: 1, name: 1 } }]);
+    next()
+})
+CommentSchema.pre('findOne', function (next) {
+    this.populate([{ path: 'user', select: { email: 1, name: 1 } }]);
+    next()
+})
 CommentSchema.virtual('users', {
     ref: 'user',
     localField: "_id",

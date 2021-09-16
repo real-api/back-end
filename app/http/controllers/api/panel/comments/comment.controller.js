@@ -18,6 +18,7 @@ class CommentController extends Controller {
     }
     async getBlogComments(req, res, next) {
         try {
+            errorList = {}
             let result = validationResult(req);
             if (result.isEmpty()) {
                 const user = req.user._id.toString();
@@ -42,9 +43,17 @@ class CommentController extends Controller {
     }
     async createComment(req, res, next) {
         try {
+            errorList = {}
             let result = validationResult(req)
             if (result.isEmpty()) {
-                if (!(req.query.parent && req.params.blog)) {
+                if ((req.query.parent && req.params.blog)) {
+                    return res.status(400).json({
+                        status: 400,
+                        success: false,
+                        error: "Bad Request",
+                        message: 'You can not submit parent and blog values at the same timee',
+                    })
+                } else if ((req.query.parent || req.params.blog)) {
                     const user = req.user._id.toString();
                     const comment = await CommentService.createComment(user, req);
                     return res.status(201).json({
@@ -58,7 +67,7 @@ class CommentController extends Controller {
                         status: 400,
                         success: false,
                         error: "Bad Request",
-                        message: 'You can not submit parent and blog values at the same timee',
+                        message: 'Cannot send (parent and blog) blank. At least one option must be sent',
                     })
                 }
             } else {
@@ -72,6 +81,7 @@ class CommentController extends Controller {
     }
     async getCommentById(req, res, next) {
         try {
+            errorList = {}
             let result = validationResult(req);
             if (result.isEmpty()) {
                 const { id } = req.params;
@@ -96,6 +106,7 @@ class CommentController extends Controller {
     }
     async removeCommentById(req, res, next) {
         try {
+            errorList = {}
             let result = validationResult(req);
             if (result.isEmpty()) {
                 const { id } = req.params;
@@ -121,6 +132,7 @@ class CommentController extends Controller {
     }
     async confirmComment(req, res, next) {
         try {
+            errorList = {}
             let result = validationResult(req);
             if (result.isEmpty()) {
                 const { id } = req.params;

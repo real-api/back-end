@@ -1,10 +1,11 @@
 const CommentModel = require("app/models/comment.model")
 const Controller = require("app/http/controllers/controller")
 const CommentDTO = require("app/http/controllers/api/panel/comments/comment.dto")
+const BlogService = require("app/http/controllers/api/panel/blogs/blog.service")
 class CommentService extends Controller {
     commentDto;
     async getAllComments(user) {
-        const comments = await CommentModel.find({ user , blog : {$ne : undefined}}).populate([{ path: "user", select: { email: 1, name: 1 } }, { path: "children", populate: { path: "parent" } }])
+        const comments = await CommentModel.find({ user, blog: { $ne: undefined } }).populate([{ path: "user", select: { email: 1, name: 1 } }, { path: "children", populate: { path: "parent" } }])
         return comments;
     }
     async getBlogComments(user, blog) {
@@ -12,6 +13,14 @@ class CommentService extends Controller {
         return comments;
     }
     async createComment(user, req) {
+        const count = await CommentModel.where({ user }).count()
+        if (count >= 20) throw this.Exception(403, { message: "Each user's share is 20 comment" })
+        if (req.query.parent) {
+            await this.getCommentById(req.query.parent)
+        }
+        if (req.params.blog) {
+            await BlogService.getBlogById(req.params.blog)
+        }
         const blog = req.params.blog;
         this.commentDto = new CommentDTO(req, blog);
         this.removeEmptyProperty(this.commentDto)
@@ -42,7 +51,7 @@ class CommentService extends Controller {
         const comment = await this.getCommentById(_id, user);
         await CommentModel.updateOne({ _id: comment._id, user }, { $set: { flag: true } }).catch(err => {
             console.log(err);
-            throw this.Exception(500, {message : "confirm comment is faild"})
+            throw this.Exception(500, { message: "confirm comment is faild" })
         })
         const updatedComment = await this.getCommentById(comment._id, user);
         return updatedComment
