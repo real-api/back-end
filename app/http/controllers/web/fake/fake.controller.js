@@ -1,6 +1,8 @@
 const Controller = require("app/http/controllers/controller");
 const FakeService = require('app/http/controllers/web/fake/fake.service')
 const { validationResult } = require("express-validator")
+const {BlogDTO, CommentDTO} = require("app/http/controllers/web/fake/fake.dto")
+
 let errorList = {}
 class FakeController extends Controller {
     async getAllBlogs(req, res, next) {
@@ -80,16 +82,16 @@ class FakeController extends Controller {
         try {
             let result = validationResult(req);
             if (result.isEmpty()) {
-                const {id} = req.params
+                const { id } = req.params
                 const blog = await FakeService.removeBlog(id)
-                if(blog){
+                if (blog) {
                     return res.status(202).json({
                         status: 202,
                         success: true,
                         message: "Deleting Blog Done",
                     })
-                }else{
-                    throw this.Exception(500, {message : 'can not remove Blog'})
+                } else {
+                    throw this.Exception(500, { message: 'can not remove Blog' })
                 }
             } else {
                 this.errorHandler(result.errors, errorList);
@@ -108,16 +110,16 @@ class FakeController extends Controller {
         try {
             let result = validationResult(req);
             if (result.isEmpty()) {
-                const {id} = req.params
+                const { id } = req.params
                 const blog = await FakeService.removeComment(id)
-                if(blog){
+                if (blog) {
                     return res.status(202).json({
                         status: 202,
                         success: true,
                         message: "Deleting Comment Done",
                     })
-                }else{
-                    throw this.Exception(500, {message : 'can not remove Comment'})
+                } else {
+                    throw this.Exception(500, { message: 'can not remove Comment' })
                 }
             } else {
                 this.errorHandler(result.errors, errorList);
@@ -128,6 +130,30 @@ class FakeController extends Controller {
                     messages: errorList
                 })
             }
+        } catch (error) {
+            console.log(error);
+            next(error)
+        }
+    }
+    async createBlog(req, res, next) {
+        try {
+            let blog = new BlogDTO(req);
+            this.removeEmptyProperty(blog)
+            return res.json({
+                ...blog
+            })
+        } catch (error) {
+            console.log(error);
+            next(error)
+        }
+    }
+    async createComment(req, res, next) {
+        try {
+            let comment = new CommentDTO(req);
+            this.removeEmptyProperty(comment)
+            return res.json({
+                ...comment
+            })
         } catch (error) {
             console.log(error);
             next(error)

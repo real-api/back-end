@@ -6,4 +6,6 @@ router.get('/blogs/:id', FakeController.getBlogById)
 router.get('/comments/:id', FakeController.getCommentById)
 router.delete('/blogs/:id', FakeController.removeBlogById)
 router.delete('/comments/:id', FakeController.removeCommentById)
+router.post("/blogs", FakeController.createBlog)
+router.post("/comments", FakeController.createComment)
 module.exports = router
