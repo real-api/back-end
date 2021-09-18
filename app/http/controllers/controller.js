@@ -1,7 +1,9 @@
+// "strict mode"
 const autoBind = require("auto-bind")
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
 const fs = require("fs")
+const _ = require("lodash")
 module.exports = class Controller {
     constructor() {
         autoBind(this)
@@ -162,5 +164,26 @@ module.exports = class Controller {
         const randPwLen = Math.floor(Math.random() * (max - min + 1)) + min;
         const randPassword = Array(randPwLen).fill(passwordChars).map(x => x[Math.floor(Math.random() * x.length)]).join('');
         return randPassword;
+    }
+    removeCustomPropertyInArrayOfDBResult(keyArray, arrayOfDocument) {
+        const newDocs = []
+        arrayOfDocument.forEach(row => {
+            Object.keys(row._doc).forEach((key, index) => {
+                if (keyArray.includes(key)) {
+                    delete row._doc[key]
+                }
+            })
+            newDocs.push(row._doc)
+        })
+        return newDocs
+    }
+    removeCustomPropertyInObjectOfDBResult(keyArray, Document) {
+        Object.keys(Document._doc).forEach((key, index) => {
+            if (keyArray.includes(key)) {
+                delete Document._doc[key]
+            }
+        })
+        const newDoc = { ...Document._doc }
+        return newDoc
     }
 }

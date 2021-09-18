@@ -1,17 +1,20 @@
 const Controller = require("app/http/controllers/controller");
 const FakeService = require('app/http/controllers/web/fake/fake.service')
 const { validationResult } = require("express-validator")
-const {BlogDTO, CommentDTO} = require("app/http/controllers/web/fake/fake.dto")
+const { BlogDTO, CommentDTO } = require("app/http/controllers/web/fake/fake.dto")
 
 let errorList = {}
 class FakeController extends Controller {
     async getAllBlogs(req, res, next) {
         try {
             const blogs = await FakeService.getAllBlogs()
+            const keyArray = ['id', '__v']
+            const newBlogs = 
+            this.removeCustomPropertyInArrayOfDBResult(keyArray, blogs);
             return res.status(200).json({
                 status: 200,
                 success: true,
-                blogs
+                blogs : newBlogs
             })
         } catch (error) {
             next(error)
@@ -20,10 +23,13 @@ class FakeController extends Controller {
     async getAllComments(req, res, next) {
         try {
             const comments = await FakeService.getAllComments()
+            const keyArray = ['flag', 'id', 'children', '__v']
+            const newComments = 
+            this.removeCustomPropertyInArrayOfDBResult(keyArray, comments);
             return res.status(200).json({
                 status: 200,
                 success: true,
-                comments
+                comments : newComments
             })
         } catch (error) {
             console.log(error);
@@ -36,10 +42,13 @@ class FakeController extends Controller {
             if (result.isEmpty()) {
                 const { id } = req.params;
                 const blog = await FakeService.getBlogById(id)
+                const arrayOfKeys = ['id', '__v']
+                const newBlog = this.removeCustomPropertyInObjectOfDBResult(arrayOfKeys, blog)
+                
                 return res.status(200).json({
                     status: 200,
                     success: true,
-                    blog
+                    blog : newBlog
                 })
             } else {
                 this.errorHandler(result.errors, errorList);
@@ -60,10 +69,14 @@ class FakeController extends Controller {
             if (result.isEmpty()) {
                 const { id } = req.params;
                 const comment = await FakeService.getCommentById(id)
+                const arrayOfKeys = ['id', '__v']
+                const newComment = 
+                this.removeCustomPropertyInObjectOfDBResult(arrayOfKeys, comment)
+                
                 return res.status(200).json({
                     status: 200,
                     success: true,
-                    comment
+                    comment : newComment
                 })
             } else {
                 this.errorHandler(result.errors, errorList);
