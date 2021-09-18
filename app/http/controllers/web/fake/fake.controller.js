@@ -69,7 +69,7 @@ class FakeController extends Controller {
             if (result.isEmpty()) {
                 const { id } = req.params;
                 const comment = await FakeService.getCommentById(id)
-                const arrayOfKeys = ['id', '__v']
+                const arrayOfKeys = ['id', '__v', 'flag']
                 const newComment = 
                 this.removeCustomPropertyInObjectOfDBResult(arrayOfKeys, comment)
                 
