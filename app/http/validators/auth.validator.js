@@ -13,13 +13,6 @@ class AuthValidator {
         return [
             body("name").notEmpty().withMessage("Enter first and last name"),
             body("email").normalizeEmail().isEmail().withMessage('Email is incorrect'),
-            // body("password").isLength({ min: 6, max: 16 }).withMessage("Password must be between 8 and 16 character"),
-            // body("confirmpassword").custom((value, { req }) => {
-            //     if (req.body.password !== value) {
-            //         throw new Error("Password Not match with confirm-password")
-            //     }
-            //     return true
-            // }),
         ]
     }
 }
