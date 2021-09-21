@@ -32,12 +32,11 @@ module.exports = class Application {
     }
     configApplication() {
         require("app/helpers/passport/passport.local")
+        app.use(cors())
         app.use(express.static("public"))
         app.use(express.json())
         app.use(express.urlencoded({extended : true}))
-        app.use(express.urlencoded({ extended: true }))
         app.use(cookieParser(`${process.env.SECRET_STRING}`))
-        app.use(cors())
         app.set(session({
             secret: `${process.env.SECRET_STRING}`,
             resave: true,
