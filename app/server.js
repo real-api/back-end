@@ -9,7 +9,7 @@ const AppRoutes = require("app/routes/routes");
 const passport = require('passport');
 const session = require("express-session");
 const rememberLogin = require("app/http/middlewares/user.token.middleware");
-
+const cors = require("cors")
 module.exports = class Application {
     constructor() {
         this.configApplication();
@@ -32,6 +32,7 @@ module.exports = class Application {
     }
     configApplication() {
         require("app/helpers/passport/passport.local")
+        app.use(cors())
         app.use(express.static("public"))
         app.use(express.json())
         app.use(express.urlencoded({ extended: true }))
