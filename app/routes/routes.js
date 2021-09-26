@@ -1,5 +1,5 @@
 const router = require('express').Router()
-
+const cors = require("cors")
 const AuthRoutes = require("app/routes/auth.routes")
 const ApiRoutes = require("app/routes/api.routes")
 const FakeRoutes = require("app/routes/fake/fake.routes")

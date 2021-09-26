@@ -35,7 +35,7 @@ module.exports = class Application {
         app.use(cors())
         app.use(express.static("public"))
         app.use(express.json())
-        app.use(express.urlencoded({extended : true}))
+        app.use(express.urlencoded({ extended: true }))
         app.use(cookieParser(`${process.env.SECRET_STRING}`))
         app.set(session({
             secret: `${process.env.SECRET_STRING}`,
